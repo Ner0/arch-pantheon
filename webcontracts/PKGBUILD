@@ -1,0 +1,46 @@
+# Maintainer: Ner0
+
+pkgname=webcontracts-bzr
+pkgver=6
+pkgrel=1
+pkgdesc="A collection of scripts to be used with contractor and various online services"
+arch=('i686' 'x86_64')
+url="https://launchpad.net/webcontracts"
+license=('GPL3')
+depends=('libpantheon-bzr' 'json-glib' 'granite-bzr' 'rest' 'libwebkit3' 'libsoup' 'dconf')
+makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
+install=$pkgname.install
+
+_bzrtrunk=lp:webcontracts
+_bzrmod=webcontracts
+
+build() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
+  cp -r $_bzrmod $_bzrmod-build
+  cd $_bzrmod-build
+
+  [ -d build ] && rm -rf build
+  mkdir build
+  cd build
+
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF
+
+  make ${MAKEFLAGS}
+}
+
+package() {
+  cd "$srcdir/$_bzrmod-build/build"
+  make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
+}

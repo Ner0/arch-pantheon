@@ -1,0 +1,37 @@
+# Maintainer: Ner0
+
+pkgname=elementary-icons-bzr
+pkgver=968
+pkgrel=1
+pkgdesc="An icon theme designed to be smooth, sexy, clear, and efficient (Development branch)"
+arch=('any')
+url="https://launchpad.net/elementaryicons"
+license=('GPL2')
+depends=('hicolor-icon-theme')
+optdepends=('egtk-bzr: Development branch of the elementary GTK theme. [AUR]')
+conflicts=('elementary-icons')
+options=('!strip')
+PKGEXT='.pkg.tar'
+
+_bzrtrunk=lp:elementaryicons
+_bzrmod=3.0
+
+build() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+}
+
+package() {
+  install -dm755 "$pkgdir/usr/share/icons/"
+  cp -Prf "$srcdir/$_bzrmod" "$pkgdir/usr/share/icons/elementary"
+  install -Dm644 "$srcdir/$_bzrmod/COPYING" "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+  rm -rf "$pkgdir"/usr/share/icons/elementary/{.bzr*,AUTHORS,CONTRIBUTORS,COPYING}
+}

@@ -1,0 +1,43 @@
+# Maintainer: Ner0
+
+pkgname=snap-elementary-bzr
+pkgver=28
+pkgrel=1
+pkgdesc="A fast photo booth application designed for the Pantheon desktop"
+arch=('i686' 'x86_64')
+url="https://launchpad.net/snap-elementary"
+license=('GPL3')
+depends=('gtk3' 'glib2' 'granite' 'desktop-file-utils' 'hicolor-icon-theme')
+makedepends=('bzr' 'vala' 'cmake')
+install=$pkgname.install
+
+_bzrtrunk=lp:snap-elementary
+_bzrmod=snap
+
+build() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
+  cp -r $_bzrmod $_bzrmod-build
+  cd $_bzrmod-build
+  [ -d build ] && rm -rf build
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+  make
+}
+
+package() {
+  cd "$srcdir/$_bzrmod-build/build"
+  make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
+}
