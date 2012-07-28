@@ -1,0 +1,29 @@
+# Maintainer: Ner0
+
+pkgname=pantheon-terminal
+pkgver=0.1
+pkgrel=1
+pkgdesc="A super lightweight, beautiful, and simple terminal from the Elementary project"
+arch=('i686' 'x86_64')
+url="https://launchpad.net/pantheon-terminal"
+license=('GPL3')
+depends=('gtk3' 'glib2' 'vte3' 'granite' 'gconf' 'dconf' 'libnotify' 'clutter-gtk')
+makedepends=('cmake' 'vala' 'pkg-config')
+conflicts=('pantheon-terminal-bzr')
+install=$pkgname.install
+source=("https://launchpad.net/$pkgname/${pkgver%.*}.x/$pkgver/+download/$pkgname-$pkgver.tar.gz")
+md5sums=('868c63b826ab7e03236297e15e6c2aa8')
+
+build() {
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF
+  make ${MAKEFLAGS}
+}
+
+package() {
+  cd "$srcdir/build"
+  make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
+}
+
+# vim:set ts=2 sw=2 et:
