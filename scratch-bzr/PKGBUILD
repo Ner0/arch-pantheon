@@ -9,10 +9,11 @@ url="https://launchpad.net/scratch"
 license=('GPL3')
 depends=('gtksourceview3' 'libgee' 'gobject-introspection' 'glib2' 'desktop-file-utils'
          'gconf' 'gtk3' 'granite' 'libpeas' 'pango' 'dconf' 'hicolor-icon-theme' 'vte3' 'libzeitgeist')
-makedepends=('bzr' 'cmake' 'vala')
+makedepends=('bzr' 'cmake' 'vala' 'pkg-config')
 optdepends=('contractor-bzr: Contractor integration [AUR]'
             'libsoup: Pastebin plugin')
-conflicts=('scratch-editor')
+conflicts=('scratch-text-editor')
+provides=('scratch-text-editor')
 options=('!makeflags')
 install=$pkgname.install
 

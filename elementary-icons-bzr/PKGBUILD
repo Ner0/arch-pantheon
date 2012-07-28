@@ -1,7 +1,7 @@
 # Maintainer: Ner0
 
 pkgname=elementary-icons-bzr
-pkgver=968
+pkgver=982
 pkgrel=1
 pkgdesc="An icon theme designed to be smooth, sexy, clear, and efficient (Development branch)"
 arch=('any')
@@ -11,6 +11,8 @@ depends=('hicolor-icon-theme')
 optdepends=('egtk-bzr: Development branch of the elementary GTK theme. [AUR]')
 conflicts=('elementary-icons')
 options=('!strip')
+source=('user.desktop.patch')
+md5sums=('9b20dc384110f934747052376eae2e51')
 PKGEXT='.pkg.tar'
 
 _bzrtrunk=lp:elementaryicons
@@ -34,4 +36,7 @@ package() {
   cp -Prf "$srcdir/$_bzrmod" "$pkgdir/usr/share/icons/elementary"
   install -Dm644 "$srcdir/$_bzrmod/COPYING" "$pkgdir/usr/share/licenses/$pkgname/COPYING"
   rm -rf "$pkgdir"/usr/share/icons/elementary/{.bzr*,AUTHORS,CONTRIBUTORS,COPYING}
+
+  cd "$pkgdir/usr/share/icons/elementary"
+  patch -Np0 -i "$srcdir/user.desktop.patch"
 }

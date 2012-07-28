@@ -1,20 +1,23 @@
 # Maintainer: Ner0
 
-pkgname=pantheon-notify-bzr
-pkgver=24
+pkgname=pantheon-terminal-bzr
+pkgver=273
 pkgrel=1
-pkgdesc="A stylish notification daemon from the elementary project"
+pkgdesc="A super lightweight, beautiful, and simple terminal from the Elementary project"
 arch=('i686' 'x86_64')
-url="https://launchpad.net/pantheon-notify"
+url="https://launchpad.net/pantheon-terminal"
 license=('GPL3')
-depends=('clutter-gtk' 'glib2' 'granite-bzr' 'gtk3' 'libwnck3')
+depends=('gtk3' 'glib2' 'vte3' 'granite' 'gconf' 'dconf' 'libnotify' 'clutter-gtk')
 makedepends=('bzr' 'cmake' 'vala' 'pkg-config')
-conflicts=('notification-daemon')
+conflicts=('pantheon-terminal')
+provides=('pantheon-terminal')
+install=$pkgname.install
 
-_bzrtrunk=lp:pantheon-notify
-_bzrmod=pantheon-notify
+_bzrtrunk=lp:pantheon-terminal
+_bzrmod=pantheon-terminal
 
 build() {
+  cd "$srcdir"
   msg "Connecting to Bazaar server...."
 
   if [[ -d "$_bzrmod" ]]; then
@@ -27,24 +30,20 @@ build() {
   msg "Bazaar checkout done or server timeout"
   msg "Starting build..."
 
-  [ -d "$srcdir/$_bzrmod-build" ] && rm -rf "$srcdir/$_bzrmod-build"
+  rm -rf "$srcdir/$_bzrmod-build"
   cp -r "$srcdir/$_bzrmod" "$srcdir/$_bzrmod-build"
   cd "$srcdir/$_bzrmod-build"
+
   [ -d build ] && rm -rf build
   mkdir build
   cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF
   make
 }
 
 package() {
   cd "$srcdir/$_bzrmod-build/build"
   make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
-
-  install -Dm644 ../data/pantheon-notify.desktop "$pkgdir/etc/xdg/autostart/pantheon-notify.desktop"
-
-  echo "OnlyShowIn=GNOME;" >> "$pkgdir/etc/xdg/autostart/pantheon-notify.desktop"
-  echo "AutostartCondition=GNOME3 if-session pantheon" >> "$pkgdir/etc/xdg/autostart/pantheon-notify.desktop"
 }
 
 # vim:set ts=2 sw=2 et:
