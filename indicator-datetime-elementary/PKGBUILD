@@ -7,7 +7,7 @@ pkgdesc="Date and time indicator patched for Elementary OS"
 arch=('i686' 'x86_64')
 url="https://code.launchpad.net/~elementary-os/elementaryos/os-patch-indicator-datetime"
 license=('GPL3')
-depends=('libindicator3' 'libdbusmenu-gtk3' 'ido3' 'geoclue' 'evolution-data-server' 'dconf')
+depends=('libindicator3' 'libdbusmenu-gtk3' 'ido3' 'geoclue' 'evolution-data-server<=3.5' 'dconf')
 makedepends=('bzr' 'intltool')
 conflicts=('indicator-datetime')
 provides=('indicator-datetime')
@@ -36,7 +36,7 @@ build() {
 
   ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libexecdir=/usr/lib/indicator-datetime \
               --disable-static --disable-schemas-compile
-  make ${MAKEFLAGS}
+  make -j1
 }
 
 package() {

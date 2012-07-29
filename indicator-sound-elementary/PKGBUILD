@@ -36,7 +36,7 @@ build() {
 
   ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libexecdir=/usr/lib/indicator-sound \
               --disable-static --disable-schemas-compile
-  make ${MAKEFLAGS}
+  make -j1
 }
 
 package() {
