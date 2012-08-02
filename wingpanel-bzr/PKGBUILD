@@ -1,7 +1,7 @@
 # Maintainer: Ner0
 
-pkgname=wingpanel
-pkgver=0.1_alpha1
+pkgname=wingpanel-bzr
+pkgver=88
 pkgrel=1
 pkgdesc="Stylish top panel that holds indicators and spawns an application launcher"
 arch=('i686' 'x86_64')
@@ -14,13 +14,34 @@ optdepends=('indicator-application: take menus from applications and place them 
             'indicator-messages: Messages indiator'
             'indicator-session: Indicator to switch user, change session'
             'indicator-sound: Sound indicator')
-makedepends=('cmake' 'vala' 'pkg-config')
-conflicts=('wingpanel-bzr')
+makedepends=('bzr' 'cmake' 'vala' 'pkg-config')
+conflicts=('wingpanel')
+provides=('wingpanel')
 install=$pkgname.install
-source=("https://launchpad.net/$pkgname/${pkgver%.*}.x/${pkgver/_/-}/+download/$pkgname-${pkgver/_/-}.tar.gz")
-md5sums=('e87ef884bf44072a2ddaa4db77b7a473')
+
+_bzrtrunk=lp:wingpanel
+_bzrmod=wingpanel-gtk3
 
 build() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
+  cp -r $_bzrmod $_bzrmod-build
+  cd $_bzrmod-build
+
+  sed -i 's|log("wingpanel",LogLevelFlags.LEVEL_ERROR, "Unable to read indicators|//log|' src/Services/IndicatorFileModel.vala
+
+  [ -d build ] && rm -rf build
   mkdir build
   cd build
   cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF
@@ -28,6 +49,6 @@ build() {
 }
 
 package() {
-  cd "$srcdir/build/"
+  cd "$srcdir/$_bzrmod-build/build"
   make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
 }

@@ -7,7 +7,7 @@ pkgdesc="GNOME cc plug for Switchboard"
 arch=('i686' 'x86_64')
 url="https://code.launchpad.net/~elementary-os/pantheon-plugs/gnomecc-plug"
 license=('GPL3')
-depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr')
+depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr' 'libsocialweb')
 makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
 
 _bzrtrunk=lp:~xapantu/pantheon-plugs/gnomecc

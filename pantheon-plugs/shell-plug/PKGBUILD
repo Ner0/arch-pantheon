@@ -1,7 +1,7 @@
 # Maintainer: Ner0
 
 pkgname=shell-plug-bzr
-pkgver=7
+pkgver=15
 pkgrel=1
 pkgdesc="Shell plug for Switchboard"
 arch=('i686' 'x86_64')
@@ -10,7 +10,7 @@ license=('GPL3')
 depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr')
 makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
 
-_bzrtrunk=lp:~elementary-os/pantheon-plugs/shell-plug
+_bzrtrunk=lp:~elementary-pantheon/pantheon-plugs/shell-plug
 _bzrmod=shell-plug
 
 build() {
@@ -29,6 +29,8 @@ build() {
   [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
   cp -r $_bzrmod $_bzrmod-build
   cd $_bzrmod-build
+
+  sed -i 's/\/usr\/share\/backgrounds/\/usr\/share\/backgrounds\/elementary/' src/Wallpaper.vala
 
   [ -d build ] && rm -rf build
   mkdir build

@@ -1,13 +1,13 @@
 # Maintainer: Ner0
 
 pkgname=gala-bzr
-pkgver=165
+pkgver=182
 pkgrel=1
 pkgdesc="A window & compositing manager based on libmutter and designed by elementary"
 arch=('i686' 'x86_64')
 url="https://launchpad.net/gala"
 license=('GPL3')
-depends=('granite-bzr' 'mutter-git' 'clutter' 'clutter-gtk' 'bamf' 'libxcb' 'gtk3' 'gobject-introspection' 'gsettings-desktop-schemas')
+depends=('granite-bzr' 'mutter-git' 'clutter' 'clutter-gtk' 'bamf' 'libxcb' 'libxfixes' 'gtk3' 'gobject-introspection' 'gsettings-desktop-schemas')
 makedepends=('bzr' 'vala' 'cmake')
 install=$pkgname.install
 
@@ -37,7 +37,7 @@ build() {
   mkdir build
   cd build
 
-  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DGSETTINGS_LOCALINSTALL=OFF
 
   make ${MAKEFLAGS}
 }

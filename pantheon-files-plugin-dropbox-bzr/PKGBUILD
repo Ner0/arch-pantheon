@@ -1,17 +1,17 @@
 # Maintainer: Ner0
 
-pkgname=wallpaper-plug-bzr
-pkgver=30
+pkgname=pantheon-files-plugin-dropbox-bzr
+pkgver=20
 pkgrel=1
-pkgdesc="Wallpaper plug for Switchboard"
+pkgdesc="Dropbox integration for Files"
 arch=('i686' 'x86_64')
-url="https://code.launchpad.net/~elementary-os/pantheon-plugs/wallpaper-plug"
+url="https://code.launchpad.net/~elementary-apps/pantheon-files/pantheon-files-plugin-dropbox"
 license=('GPL3')
-depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr')
-makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
+depends=('glib2' 'gtk3' 'libgee' 'files-bzr')
+makedepends=('bzr' 'cmake' 'vala' 'pkg-config')
 
-_bzrtrunk=lp:~elementary-os/pantheon-plugs/wallpaper-plug
-_bzrmod=wallpaper-plug
+_bzrtrunk=lp:~elementary-apps/pantheon-files/pantheon-files-plugin-dropbox
+_bzrmod=pantheon-files-plugin-dropbox
 
 build() {
   msg "Connecting to Bazaar server...."
@@ -29,8 +29,6 @@ build() {
   [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
   cp -r $_bzrmod $_bzrmod-build
   cd $_bzrmod-build
-
-  sed -i 's/\/usr\/share\/backgrounds/\/usr\/share\/backgrounds\/elementary/' src/wallpaper-plug.vala
 
   [ -d build ] && rm -rf build
   mkdir build

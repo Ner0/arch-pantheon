@@ -1,23 +1,19 @@
 # Maintainer: Ner0
 
-pkgname=pantheon-terminal-bzr
-pkgver=283
+pkgname=pantheon-greeter-bzr
+pkgver=67
 pkgrel=1
-pkgdesc="A super lightweight, beautiful, and simple terminal from the Elementary project"
+pkgdesc="Pantheon Styled Login Screen for LightDM"
 arch=('i686' 'x86_64')
-url="https://launchpad.net/pantheon-terminal"
+url="https://launchpad.net/pantheon-greeter"
 license=('GPL3')
-depends=('gtk3' 'glib2' 'vte3' 'granite-bzr' 'gconf' 'dconf' 'libnotify' 'clutter-gtk')
+depends=('lightdm' 'granite-bzr' 'gtk3' 'clutter-gtk' 'libindicator3')
 makedepends=('bzr' 'cmake' 'vala' 'pkg-config')
-conflicts=('pantheon-terminal')
-provides=('pantheon-terminal')
-install=$pkgname.install
 
-_bzrtrunk=lp:pantheon-terminal
-_bzrmod=pantheon-terminal
+_bzrtrunk=lp:pantheon-greeter
+_bzrmod=pantheon-greeter
 
 build() {
-  cd "$srcdir"
   msg "Connecting to Bazaar server...."
 
   if [[ -d "$_bzrmod" ]]; then
@@ -30,20 +26,22 @@ build() {
   msg "Bazaar checkout done or server timeout"
   msg "Starting build..."
 
-  rm -rf "$srcdir/$_bzrmod-build"
+  [ -d "$srcdir/$_bzrmod-build" ] && rm -rf "$srcdir/$_bzrmod-build"
   cp -r "$srcdir/$_bzrmod" "$srcdir/$_bzrmod-build"
   cd "$srcdir/$_bzrmod-build"
+
+  sed -i 's|${DEPS_LIBRARIES}|${DEPS_LIBRARIES} -lm|g' CMakeLists.txt
 
   [ -d build ] && rm -rf build
   mkdir build
   cd build
-  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DGSETTINGS_LOCALINSTALL=OFF
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr
   make ${MAKEFLAGS}
 }
 
 package() {
   cd "$srcdir/$_bzrmod-build/build"
-  make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
+  make DESTDIR="$pkgdir/" install
 }
 
 # vim:set ts=2 sw=2 et:

@@ -1,17 +1,18 @@
 # Maintainer: Ner0
 
-pkgname=wallpaper-plug-bzr
-pkgver=30
+pkgname=ergo-bzr
+pkgver=33
 pkgrel=1
-pkgdesc="Wallpaper plug for Switchboard"
+pkgdesc="A lightweight ToDo app written in Vala for the elementary project"
 arch=('i686' 'x86_64')
-url="https://code.launchpad.net/~elementary-os/pantheon-plugs/wallpaper-plug"
-license=('GPL3')
-depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr')
+url="https://launchpad.net/ergo"
+license=('CCPL')
+depends=('dconf' 'glib2' 'granite' 'gtk3' 'hicolor-icon-theme' 'sqlite')
 makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
+install=$pkgname.install
 
-_bzrtrunk=lp:~elementary-os/pantheon-plugs/wallpaper-plug
-_bzrmod=wallpaper-plug
+_bzrtrunk=lp:ergo
+_bzrmod=ergo
 
 build() {
   msg "Connecting to Bazaar server...."
@@ -29,14 +30,11 @@ build() {
   [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
   cp -r $_bzrmod $_bzrmod-build
   cd $_bzrmod-build
-
-  sed -i 's/\/usr\/share\/backgrounds/\/usr\/share\/backgrounds\/elementary/' src/wallpaper-plug.vala
-
   [ -d build ] && rm -rf build
   mkdir build
   cd build
 
-  cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_EXE_LINKER_FLAGS="$CFLAGS -lgthread-2.0"
 
   make ${MAKEFLAGS}
 }
