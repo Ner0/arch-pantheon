@@ -1,0 +1,48 @@
+# Maintainer: Ner0
+
+pkgname=strip-comicreader-bzr
+pkgver=81
+pkgrel=1
+pkgdesc="An elementary comic book reader"
+arch=('i686' 'x86_64')
+url="https://launchpad.net/strip"
+license=('GPL3')
+depends=('libarchive' 'binutils' 'glibc' 'gdk-pixbuf2' 'glib2' 'granite'
+         'gtk3' 'dconf' 'zlib' 'hicolor-icon-theme' 'xdg-utils' 'desktop-file-utils')
+makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
+install=$pkgname.install
+
+_bzrtrunk=lp:strip
+_bzrmod=strip
+
+build() {
+  msg "Connecting to the server...."
+
+  if [ -d "$_bzrmod" ]; then
+    cd "$_bzrmod" && bzr pull "$_bzrtrunk" -r "$pkgver"
+    msg "The local files are updated."
+  else
+    bzr branch "$_bzrtrunk" "$_bzrmod" -r "$pkgver"
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  [ -d "$srcdir/$_bzrmod-build" ] && rm -rf "$srcdir/$_bzrmod-build"
+  cp -r "$srcdir/$_bzrmod" "$srcdir/$_bzrmod-build"
+  cd "$srcdir/$_bzrmod-build"
+  sed -i 's/apps.strip-comicreader/org.elementary.strip-comicreader/g' src/{StripWindow.vala,Strip.vala}
+  [ -d build ] && rm -rf build
+  mkdir build
+  cd build
+  LDFLAGS="/usr/lib/libgthread-2.0.so"
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+  make ${MAKEFLAGS}
+}
+
+package() {
+  cd "$srcdir/$_bzrmod-build/build"
+  make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
+}
+
+# vim:set ts=2 sw=2 et:

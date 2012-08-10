@@ -1,0 +1,15 @@
+# Maintainer: Ner0
+
+pkgname=pantheon
+pkgver=1.0
+pkgrel=1
+pkgdesc="A metapackage for Pantheon Desktop from Elementary OS"
+arch=('any')
+url="https://launchpad.net/elementaryos"
+license=('GPL3')
+groups=('pantheon')
+depends=('pantheon-shell-bzr' 'egtk-bzr' 'files-bzr' 'indicator-pantheon-session-bzr' 'indicator-sound-elementary-bzr' 'luna-wallpapers' 'maya-bzr' 'noise-bzr' 'pantheon-greeter-bzr' 'pantheon-notify-bzr' 'pantheon-terminal-bzr' 'scratch-bzr' 'switchboard-bzr' 'contractor-bzr')
+
+build() {
+  return 0
+}

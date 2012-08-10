@@ -1,0 +1,45 @@
+pkgname=egtk-bzr
+pkgver=521
+pkgrel=1
+pkgdesc="The official elementary GTK theme designed to be smooth, attractive, fast, and usable."
+arch=('any')
+url="https://launchpad.net/egtk"
+license=('GPL2')
+groups=('pantheon')
+depends=('gtk-engine-murrine-git' 'gtk-engine-unico')
+makedepends=('bzr')
+optdepends=('elementary-icons-bzr: elementary icon theme')
+conflicts=('elementary-gtk-theme')
+source=('egtk-openbox.patch')
+md5sums=('a2f0f5187e70657f02dee9883e577beb')
+
+_bzrtrunk=lp:egtk
+_bzrmod=egtk
+
+build() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+}
+
+package() {
+  cd "$srcdir/egtk"
+
+  find . -type f -not -name *~\* -exec install -Dm644 '{}' "$pkgdir/usr/share/themes/elementary/{}" \;
+
+  install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
+
+  cd "$pkgdir/usr/share/themes/elementary"
+  patch -Np0 -i "$srcdir/egtk-openbox.patch"
+
+  sed -i '/@import url("panel.css");/d' "$pkgdir/usr/share/themes/elementary/gtk-3.0/gtk-widgets.css"
+
+  rm -rf ./{.bzr,debian,AUTHORS,CONTRIBUTORS,COPYING}
+}

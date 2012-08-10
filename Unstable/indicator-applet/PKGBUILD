@@ -1,0 +1,36 @@
+pkgname=indicator-applet
+pkgver=0.5.0
+pkgrel=1
+pkgdesc="Applet to display information from various applications consistently in the panel"
+arch=('i686' 'x86_64')
+url="https://launchpad.net/indicator-applet"
+license=('GPL')
+depends=('gnome-panel' 'libindicator3' 'xdg-utils')
+makedepends=('intltool')
+optdepends=('indicator-application: take menus from applications and place them in the panel'
+            'indicator-appmenu: host the menus from an application'
+            'indicator-datetime: a very, very simple clock'
+            'indicator-messages: a place on the users desktop that collects messages that need a response'
+            'indicator-power: show the power status of your devices'
+            'indicator-printers: show active print jobs'
+            'indicator-session: change your status, switch users'
+            'indicator-sound: a unified sound menu')
+install=$pkgname.install
+source=("https://launchpad.net/indicator-applet/0.5/$pkgver/+download/$pkgname-$pkgver.tar.gz")
+md5sums=('f3f7181a8422a71187f4483adeebb705')
+
+build() {
+  cd $pkgname-$pkgver
+
+  sed -i 's/\/gtypes//' src/tomboykeybinder.h
+  sed -i 's|{"libapplication.so", NULL},|{"libapplication.so", NULL},\n\ \ {"libprintersmenu.so", NULL},|' src/applet-main.c
+
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libexecdir=/usr/lib/$pkgname \
+              --disable-static
+  make
+}
+
+package() {
+  cd "$srcdir/$pkgname-$pkgver"
+  make DESTDIR="$pkgdir/" install
+}

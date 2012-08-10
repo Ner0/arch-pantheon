@@ -1,0 +1,41 @@
+# Maintainer: Ner0
+
+pkgname=pantheon-shell-bzr
+pkgver=53
+pkgrel=1
+pkgdesc="Elementary's desktop environment"
+arch=('any')
+url="https://launchpad.net/elementaryos"
+license=('GPL3')
+groups=('pantheon')
+depends=('gnome-session' 'gnome-settings-daemon' 'cerbere-bzr' 'plank-bzr' 'slingshot-bzr' 'wingpanel-bzr' 'gala-bzr')
+makedepends=('bzr')
+
+_bzrtrunk=lp:~elementary-os/elementaryos/pantheon-xsession-settings
+_bzrmod=pantheon-shell
+
+package() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  cd $_bzrmod
+
+  install -vDm644 debian/pantheon.session "$pkgdir/usr/share/gnome-session/sessions/pantheon.session"
+  install -vDm644 debian/pantheon.desktop "$pkgdir/usr/share/xsessions/pantheon.desktop"
+
+  sed -i 's/FallbackSession=.*/FallbackSession=gnome-fallback/' "$pkgdir/usr/share/gnome-session/sessions/pantheon.session"
+
+  #sed -i 's/RequiredProviders=.*/RequiredProviders=windowmanager;dock;panel/' "$pkgdir/usr/share/gnome-session/sessions/pantheon.session"
+
+  #echo "DefaultProvider-dock=plank" >> "$pkgdir/usr/share/gnome-session/sessions/pantheon.session"
+  #echo "DefaultProvider-panel=wingpanel" >> "$pkgdir/usr/share/gnome-session/sessions/pantheon.session"
+}

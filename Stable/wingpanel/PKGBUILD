@@ -1,0 +1,34 @@
+# Maintainer: Ner0
+
+pkgname=wingpanel
+pkgver=0.1_alpha1
+pkgrel=1
+pkgdesc="Stylish top panel that holds indicators and spawns an application launcher"
+arch=('i686' 'x86_64')
+url="https://launchpad.net/wingpanel"
+license=('GPL3')
+groups=('pantheon')
+depends=('glib2' 'glibc' 'libgee' 'gtk3' 'hicolor-icon-theme' 'libx11' 'granite' 'libindicator3' 'pango' 'dconf' 'gettext')
+optdepends=('indicator-application: take menus from applications and place them in the panel'
+            'indicator-datetime: Date and clock indicator'
+            'indicator-me: An user indicator'
+            'indicator-messages: Messages indiator'
+            'indicator-session: Indicator to switch user, change session'
+            'indicator-sound: Sound indicator')
+makedepends=('cmake' 'vala' 'pkg-config')
+conflicts=('wingpanel-bzr')
+install=$pkgname.install
+source=("https://launchpad.net/$pkgname/${pkgver%.*}.x/${pkgver/_/-}/+download/$pkgname-${pkgver/_/-}.tar.gz")
+md5sums=('e87ef884bf44072a2ddaa4db77b7a473')
+
+build() {
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF
+  make
+}
+
+package() {
+  cd "$srcdir/build/"
+  make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
+}

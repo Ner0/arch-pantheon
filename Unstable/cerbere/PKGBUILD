@@ -1,0 +1,52 @@
+# Maintainer: Ner0
+
+pkgname=cerbere-bzr
+pkgver=35
+pkgrel=1
+pkgdesc="A simple service to relaunch Pantheon applications such as the panel, dock, wallpaper, etc."
+arch=('i686' 'x86_64')
+url="https://launchpad.net/cerbere"
+license=('GPL2')
+groups=('pantheon')
+depends=('dconf' 'glib2' 'libgee')
+makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
+install=$pkgname.install
+
+_bzrtrunk=lp:cerbere
+_bzrmod=cerbere
+
+build() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
+  cp -r $_bzrmod $_bzrmod-build
+  cd $_bzrmod-build
+
+  [ -d build ] && rm -rf build
+  mkdir build
+  cd build
+
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr
+
+  make ${MAKEFLAGS}
+}
+
+package() {
+  cd "$srcdir/$_bzrmod-build/build"
+  make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
+
+  install -Dm644 ../data/cerbere.desktop "$pkgdir/etc/xdg/autostart/cerbere.desktop"
+
+  echo "OnlyShowIn=GNOME;" >> "$pkgdir/etc/xdg/autostart/cerbere.desktop"
+  echo "AutostartCondition=GNOME3 if-session pantheon" >> "$pkgdir/etc/xdg/autostart/cerbere.desktop"
+}

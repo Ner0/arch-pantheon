@@ -1,0 +1,45 @@
+# Maintainer: Ner0
+
+pkgname=indicator-datetime-elementary-bzr
+pkgver=2
+pkgrel=1
+pkgdesc="Date and time indicator patched for Elementary OS"
+arch=('i686' 'x86_64')
+url="https://code.launchpad.net/~elementary-os/elementaryos/os-patch-indicator-datetime"
+license=('GPL3')
+depends=('libindicator3' 'libdbusmenu-gtk3' 'ido3' 'geoclue' 'evolution-data-server<=3.5' 'dconf')
+makedepends=('bzr' 'intltool')
+conflicts=('indicator-datetime')
+provides=('indicator-datetime')
+options=('!libtool' '!emptydirs')
+install=indicator-datetime.install
+
+_bzrtrunk=lp:~elementary-os/elementaryos/os-patch-indicator-datetime
+_bzrmod=os-patch-indicator-datetime
+
+build() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
+  cp -r $_bzrmod $_bzrmod-build
+  cd $_bzrmod-build
+
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libexecdir=/usr/lib/indicator-datetime \
+              --disable-static --disable-schemas-compile
+  make -j1
+}
+
+package() {
+  cd "$srcdir/$_bzrmod-build"
+  make DESTDIR="$pkgdir/" install
+}

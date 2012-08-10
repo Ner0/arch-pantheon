@@ -1,0 +1,46 @@
+# Maintainer: Ner0
+
+pkgname=indicator-sound-elementary-bzr
+pkgver=3
+pkgrel=1
+pkgdesc="System sound indicator which provides easy control of the PulseAudio sound daemon patched for Elementary OS"
+arch=('i686' 'x86_64')
+url="https://code.launchpad.net/~elementary-os/elementaryos/os-patch-indicator-sound"
+license=('GPL3')
+groups=('pantheon')
+depends=('libpulse' 'libindicator3' 'libdbusmenu-gtk3' 'ido3' 'libnotify' 'libgee' 'dconf')
+makedepends=('bzr' 'intltool' 'vala')
+conflicts=('indicator-sound')
+provides=('indicator-sound')
+options=('!libtool')
+install=indicator-sound.install
+
+_bzrtrunk=lp:~elementary-os/elementaryos/os-patch-indicator-sound
+_bzrmod=os-patch-indicator-sound
+
+build() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
+  cp -r $_bzrmod $_bzrmod-build
+  cd $_bzrmod-build
+
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libexecdir=/usr/lib/indicator-sound \
+              --disable-static --disable-schemas-compile
+  make -j1
+}
+
+package() {
+  cd "$srcdir/$_bzrmod-build"
+  make DESTDIR="$pkgdir/" install
+}
