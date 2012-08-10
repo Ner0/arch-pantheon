@@ -1,0 +1,32 @@
+# Maintainer: Ner0
+
+pkgname=plank-theme-pantheon-bzr
+pkgver=3
+pkgrel=1
+pkgdesc="Plank theme for elementary OS, created to compliment the Pantheon desktop environment."
+arch=('i686' 'x86_64')
+url="https://launchpad.net/plank-theme-pantheon"
+license=('GPL3')
+groups=('pantheon')
+depends=('plank-bzr')
+makedepends=('bzr')
+
+_bzrtrunk=lp:plank-theme-pantheon
+_bzrmod=plank-theme-pantheon
+
+package() {
+  msg "Connecting to Bazaar server...."
+
+  if [ -d $_bzrmod ]; then
+    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  install -dm755 "$pkgdir/usr/share/plank/themes/"
+  cp -rf plank-theme-pantheon/Pantheon "$pkgdir/usr/share/plank/themes/"
+}
