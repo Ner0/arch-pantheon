@@ -19,7 +19,7 @@ md5sums=('c82784fcd53641b6436109eee009dcde')
 
 build() {
   cd scratch-$pkgver
-  [ -d build ] && rm -rf build
+  rm -rf build/
   mkdir build
   cd build
   cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF -DGSETTINGS_LOCALINSTALL=OFF
@@ -27,6 +27,6 @@ build() {
 }
 
 package() {
-  cd "$srcdir/scratch-$pkgver/build"
+  cd "scratch-$pkgver/build"
   make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
 }

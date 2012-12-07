@@ -1,0 +1,19 @@
+pkgname=ttf-open-sans
+pkgver=1.0
+pkgrel=1
+pkgdesc="A stylish and modern true type font from the creator of DroidSans."
+arch=('any')
+url="http://www.google.com/webfonts/specimen/Open+Sans"
+license=('Apache')
+depends=('fontconfig' 'xorg-fonts-encodings' 'xorg-font-utils')
+conflicts=('ttf-google-webfonts' 'ttf-google-webfonts-hg')
+install=ttf-open-sans.install
+source=("https://launchpad.net/~elementary-os/+archive/stable/+files/fonts-open-sans_$pkgver-0~1~precise1.tar.gz")
+md5sums=('14d469588d77d2b6871e66315a4e97a7')
+
+
+package() {
+  cd recipe-*
+
+  find *.ttf -exec install -Dm644 "{}" "$pkgdir/usr/share/fonts/TTF/{}" \;
+}

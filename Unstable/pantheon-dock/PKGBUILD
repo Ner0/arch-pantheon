@@ -1,20 +1,22 @@
 # Maintainer: Ner0
 
-pkgname=plank-bzr
-pkgver=682
+pkgname=pantheon-dock-bzr
+pkgver=704
 pkgrel=1
-pkgdesc="A stupidly simple dock from elementary"
+pkgdesc="The dock for elementary Pantheon, built on the awesome foundation of Plank."
 arch=('i686' 'x86_64')
-url="https://launchpad.net/plank"
+url="https://launchpad.net/pantheon-dock"
 license=('GPL3')
 groups=('pantheon')
 depends=('bamf' 'glib2' 'gtk3' 'libgee' 'libwnck3' 'libx11' 'python2' 'hicolor-icon-theme' 'cairo' 'pango' 'libdbusmenu-gtk3')
 makedepends=('bzr' 'dbus-glib' 'intltool' 'pkg-config' 'vala' 'gnome-common')
+conflicts=('plank-bzr')
+provides=("plank-bzr=$pkgver")
 options=('!libtool')
-install=$pkgname.install
+install=pantheon-dock.install
 
-_bzrtrunk=lp:plank
-_bzrmod=plank
+_bzrtrunk=lp:pantheon-dock
+_bzrmod=pantheon-dock
 
 build() {
   msg "Connecting to Bazaar server...."
@@ -29,15 +31,15 @@ build() {
   msg "BZR checkout done or server timeout"
   msg "Starting make..."
 
-  [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
-  cp -r $_bzrmod $_bzrmod-build
+  rm -rf $_bzrmod-build
+  cp -rf $_bzrmod $_bzrmod-build
   cd $_bzrmod-build
   ./autogen.sh --prefix=/usr --sysconfdir=/etc
   make ${MAKEFLAGS}
 }
 
 package() {
-  cd "$srcdir/$_bzrmod-build/"
+  cd "$_bzrmod-build/"
   make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
   sed -i 's/python/python2/' "$pkgdir/usr/share/apport/package-hooks/source_plank.py"
 }

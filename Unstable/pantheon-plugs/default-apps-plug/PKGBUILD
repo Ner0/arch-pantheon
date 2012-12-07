@@ -1,16 +1,16 @@
 # Maintainer: Ner0
 
-pkgname=default-apps-plug-bzr
-pkgver=8
+pkgname=switchboard-plug-default-applications-bzr
+pkgver=15
 pkgrel=1
 pkgdesc="Default apps plug for Switchboard"
 arch=('i686' 'x86_64')
-url="https://code.launchpad.net/~elementary-os/pantheon-plugs/default-apps-plug"
+url="https://code.launchpad.net/~elementary-pantheon/pantheon-plugs/default-apps-plug"
 license=('GPL3')
 depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr')
 makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
 
-_bzrtrunk=lp:~elementary-os/pantheon-plugs/default-apps-plug
+_bzrtrunk=lp:~elementary-pantheon/pantheon-plugs/default-apps-plug
 _bzrmod=default-apps-plug
 
 build() {

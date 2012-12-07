@@ -1,16 +1,16 @@
 # Maintainer: Ner0
 
 pkgname=audience-bzr
-pkgver=190
+pkgver=238
 pkgrel=1
-pkgdesc="A simple and modern media player"
+pkgdesc="A modern video player that brings the lessons learned from the web home to the desktop."
 arch=('i686' 'x86_64')
 url="https://launchpad.net/audience"
 license=('GPL3')
 depends=('dconf' 'gstreamer0.10' 'gstreamer0.10-base' 'gtk3' 'granite-bzr' 'clutter-gtk'
          'hicolor-icon-theme' 'desktop-file-utils' 'gtk-update-icon-cache' 'clutter-gst')
 makedepends=('bzr' 'vala' 'cmake')
-install=$pkgname.install
+install=audience.install
 
 _bzrtrunk=lp:audience
 _bzrmod=audience
@@ -28,10 +28,13 @@ build() {
   msg "BZR checkout done or server timeout"
   msg "Starting make..."
 
-  [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
+  rm -rf $_bzrmod-build
   cp -r $_bzrmod $_bzrmod-build
   cd $_bzrmod-build
-  [ -d build ] && rm -rf build
+
+  sed -i 's/clutter-gst-1.0/clutter-gst-2.0/' CMakeLists.txt
+
+  rm -rf build/
   mkdir build
   cd build
   cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DGSETTINGS_COMPILE=OFF
@@ -39,6 +42,6 @@ build() {
 }
 
 package() {
-  cd "$srcdir/$_bzrmod-build/build"
+  cd $_bzrmod-build/build
   make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
 }

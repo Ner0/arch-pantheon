@@ -1,0 +1,33 @@
+pkgname=gsettings-desktop-schemas-elementary
+_pkgname=gsettings-desktop-schemas
+pkgver=3.4.2
+pkgrel=1
+_ubver=3.4.1-0ubuntu1
+pkgdesc="Shared GSettings schemas for the Pantheon desktop"
+arch=('any')
+url="http://live.gnome.org/"
+license=('GPL')
+depends=('glib2')
+makedepends=('intltool' 'gobject-introspection')
+provides=("gsettings-desktop-schemas=$pkgver" "gsettings-desktop-schemas-ubuntu=$pkgver")
+conflicts=('gsettings-desktop-schemas' 'gsettings-desktop-schemas-ubuntu')
+install=$_pkgname.install
+source=("http://ftp.gnome.org/pub/gnome/sources/$_pkgname/${pkgver%.*}/$_pkgname-$pkgver.tar.xz"
+	"http://archive.ubuntu.com/ubuntu/pool/main/g/$_pkgname/${_pkgname}_${_ubver}.debian.tar.gz")
+sha256sums=('ce0a460128d52710b6842ca663690e38374ac921e2f6c1bdf5d54f46aa6eba4f'
+            'cde8a54bbc0e33857b184ebae59fe8dca541e8d5da658db692ebe615cdd50d4c')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  patch -Np1 -i "$srcdir/debian/patches/ubuntu_overlay-scrollbars.patch"
+
+  ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+    --disable-schemas-compile
+  make ${MAKEFLAGS}
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+  make DESTDIR="$pkgdir/" install
+}

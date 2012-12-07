@@ -13,6 +13,8 @@ conflicts=('indicator-datetime')
 provides=('indicator-datetime')
 options=('!libtool' '!emptydirs')
 install=indicator-datetime.install
+source=('schemas.patch')
+md5sums=('a9c20653433a0cab149927a982569e75')
 
 _bzrtrunk=lp:~elementary-os/elementaryos/os-patch-indicator-datetime
 _bzrmod=os-patch-indicator-datetime
@@ -33,6 +35,8 @@ build() {
   [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
   cp -r $_bzrmod $_bzrmod-build
   cd $_bzrmod-build
+
+  patch -Np0 -i "$srcdir/schemas.patch"
 
   ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libexecdir=/usr/lib/indicator-datetime \
               --disable-static --disable-schemas-compile

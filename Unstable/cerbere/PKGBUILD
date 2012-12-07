@@ -1,7 +1,7 @@
 # Maintainer: Ner0
 
 pkgname=cerbere-bzr
-pkgver=35
+pkgver=38
 pkgrel=1
 pkgdesc="A simple service to relaunch Pantheon applications such as the panel, dock, wallpaper, etc."
 arch=('i686' 'x86_64')
@@ -45,7 +45,7 @@ package() {
   cd "$srcdir/$_bzrmod-build/build"
   make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
 
-  install -Dm644 ../data/cerbere.desktop "$pkgdir/etc/xdg/autostart/cerbere.desktop"
+  #install -Dm644 ../data/cerbere.desktop "$pkgdir/etc/xdg/autostart/cerbere.desktop"
 
   echo "OnlyShowIn=GNOME;" >> "$pkgdir/etc/xdg/autostart/cerbere.desktop"
   echo "AutostartCondition=GNOME3 if-session pantheon" >> "$pkgdir/etc/xdg/autostart/cerbere.desktop"

@@ -1,18 +1,17 @@
 # Maintainer: Ner0
 
-pkgname=pantheon-shell-bzr
-pkgver=55
+pkgname=elementary-default-settings-bzr
+pkgver=53
 pkgrel=1
 pkgdesc="Elementary's desktop environment"
 arch=('any')
 url="https://launchpad.net/elementaryos"
 license=('GPL3')
 groups=('pantheon')
-depends=('gnome-session' 'gnome-settings-daemon' 'cerbere-bzr' 'plank-bzr' 'slingshot-bzr' 'wingpanel-bzr' 'gala-bzr')
 makedepends=('bzr')
 
-_bzrtrunk=lp:~elementary-os/elementaryos/pantheon-xsession-settings
-_bzrmod=pantheon-shell
+_bzrtrunk=lp:~elementary-os/elementaryos/default-settings
+_bzrmod=default-settings
 
 package() {
   msg "Connecting to Bazaar server...."

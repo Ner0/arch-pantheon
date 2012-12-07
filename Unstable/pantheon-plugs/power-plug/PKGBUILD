@@ -1,17 +1,17 @@
 # Maintainer: Ner0
 
-pkgname=switchboard-plug-appearance-bzr
-pkgver=4
+pkgname=switchboard-plug-power-bzr
+pkgver=19
 pkgrel=1
-pkgdesc="Appearance plug for Switchboard"
+pkgdesc="Power plug for Switchboard"
 arch=('i686' 'x86_64')
-url="https://code.launchpad.net/~elementary-os/pantheon-plugs/appearance-plug"
+url="https://code.launchpad.net/~elementary-apps/pantheon-plugs/power-plug"
 license=('GPL3')
-depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr')
+depends=('switchboard-bzr' 'gtk3' 'libpantheon-bzr')
 makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
 
-_bzrtrunk=lp:~tintou/pantheon-plugs/appearance-plug
-_bzrmod=appearance-plug
+_bzrtrunk=lp:~elementary-apps/pantheon-plugs/power-plug
+_bzrmod=power-plug
 
 build() {
   msg "Connecting to Bazaar server...."
@@ -29,7 +29,6 @@ build() {
   [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
   cp -r $_bzrmod $_bzrmod-build
   cd $_bzrmod-build
-
   [ -d build ] && rm -rf build
   mkdir build
   cd build
@@ -40,6 +39,6 @@ build() {
 }
 
 package() {
-  cd "$srcdir/$_bzrmod-build/build"
+  cd "$_bzrmod-build/build"
   make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
 }

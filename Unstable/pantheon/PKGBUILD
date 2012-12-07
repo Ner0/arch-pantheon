@@ -8,7 +8,7 @@ arch=('any')
 url="https://launchpad.net/elementaryos"
 license=('GPL3')
 groups=('pantheon')
-depends=('pantheon-shell-bzr' 'egtk-bzr' 'files-bzr' 'indicator-pantheon-session-bzr' 'indicator-sound-elementary-bzr' 'luna-wallpapers' 'maya-bzr' 'noise-bzr' 'pantheon-greeter-bzr' 'pantheon-notify-bzr' 'pantheon-terminal-bzr' 'scratch-bzr' 'switchboard-bzr' 'contractor-bzr' 'plank-theme-pantheon')
+depends=('pantheon-shell-bzr' 'egtk-bzr' 'files-bzr' 'indicator-pantheon-session-bzr' 'indicator-sound-elementary-bzr' 'luna-wallpapers' 'maya-bzr' 'noise-bzr' 'pantheon-greeter-bzr' 'pantheon-notify-bzr' 'pantheon-terminal-bzr' 'scratch-bzr' 'switchboard-bzr' 'contractor-bzr' 'plank-theme-pantheon' 'gtk3-ubuntu' 'gsettings-desktop-schemas-elementary' 'ttf-droid-sans' 'ttf-open-sans' 'gnome-settings-daemon-ubuntu')
 
 build() {
   return 0

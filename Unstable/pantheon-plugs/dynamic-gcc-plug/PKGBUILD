@@ -1,13 +1,13 @@
 # Maintainer: Ner0
 
-pkgname=dynamic-gcc-plug-bzr
-pkgver=20
+pkgname=switchboard-gnome-control-center-bzr
+pkgver=26
 pkgrel=1
 pkgdesc="Dynamic gcc plug for Switchboard"
 arch=('i686' 'x86_64')
 url="https://code.launchpad.net/~elementary-os/pantheon-plugs/dynamic-gcc-plug"
 license=('GPL3')
-depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr')
+depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr' 'gnome-control-center')
 makedepends=('bzr' 'vala' 'cmake' 'pkg-config')
 
 _bzrtrunk=lp:~elementary-os/pantheon-plugs/dynamic-gcc-plug
@@ -16,7 +16,7 @@ _bzrmod=dynamic-gcc-plug
 build() {
   msg "Connecting to Bazaar server...."
 
-  if [ -d $_bzrmod ]; then
+  if [[ -d $_bzrmod ]]; then
     cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver && cd ..
     msg "The local files are updated."
   else
@@ -26,20 +26,24 @@ build() {
   msg "BZR checkout done or server timeout"
   msg "Starting make..."
 
-  [ -d $_bzrmod-build ] && rm -rf $_bzrmod-build
-  cp -r $_bzrmod $_bzrmod-build
+  rm -rf $_bzrmod-build
+  cp -rf $_bzrmod $_bzrmod-build
   cd $_bzrmod-build
 
-  [ -d build ] && rm -rf build
+  sed -i 's|${DEPS_LIBRARIES}|${DEPS_LIBRARIES} -lm|' src/CMakeLists.txt
+
+  # rm -f plugs/gnomecc-jockey.plug
+
+  && rm -rf build/
   mkdir build
   cd build
 
-  cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_EXE_LINKER_FLAGS="$CFLAGS -lm"
+  cmake .. -DCMAKE_INSTALL_PREFIX=/usr
 
   make ${MAKEFLAGS}
 }
 
 package() {
-  cd "$srcdir/$_bzrmod-build/build"
+  cd "$_bzrmod-build/build"
   make GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1 DESTDIR="$pkgdir/" install
 }

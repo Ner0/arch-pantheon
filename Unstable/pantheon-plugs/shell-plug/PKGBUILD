@@ -1,11 +1,11 @@
 # Maintainer: Ner0
 
-pkgname=shell-plug-bzr
-pkgver=22
+pkgname=switchboard-plug-pantheon-shell-bzr
+pkgver=30
 pkgrel=1
 pkgdesc="Shell plug for Switchboard"
 arch=('i686' 'x86_64')
-url="https://code.launchpad.net/~elementary-os/pantheon-plugs/shell-plug"
+url="https://code.launchpad.net/~elementary-pantheon/pantheon-plugs/shell-plug"
 license=('GPL3')
 depends=('switchboard-bzr' 'granite-bzr' 'gtk3' 'glib2' 'libpantheon-bzr')
 makedepends=('bzr' 'vala' 'cmake' 'pkg-config')

@@ -1,0 +1,63 @@
+# $Id: PKGBUILD 159092 2012-05-15 14:29:58Z ibiru $
+# Maintainer: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
+# Contributor: Jan de Groot <jgc@archlinux.org>
+
+pkgname=gnome-control-center-elementary-bzr
+pkgver=4
+pkgrel=1
+pkgdesc="The Control Center for GNOME with elementary patches"
+arch=('i686' 'x86_64')
+depends=('accountsservice' 'cups-pk-helper' 'gnome-bluetooth' 'gnome-desktop' 'gnome-menus'
+         'gnome-online-accounts' 'gnome-settings-daemon' 'gsettings-desktop-schemas' 'gtk3'
+         'libgtop' 'libsocialweb' 'network-manager-applet' 'sound-theme-freedesktop' 'upower'
+         'libsystemd')
+optdepends=('mesa-demos: provides glxinfo for graphics information'
+            'apg: adds password generation for user accounts'
+            'gnome-color-manager: for color management tasks')
+makedepends=('bzr' 'gnome-doc-utils' 'intltool' 'gnome-common')
+conflicts=('gnome-control-center')
+provides=('gnome-control-center')
+url="http://www.gnome.org"
+groups=('gnome')
+install=gnome-control-center.install
+license=('GPL')
+options=('!libtool' '!emptydirs')
+source=('systemd-fallback.patch')
+sha256sums=('5fa706de582228df36dfc13eb37470e543b2f228f1fc4ad27e35a781a8779b39')
+
+_bzrtrunk=lp:~elementary-os/ubuntu-package-imports/gnome-control-center-precise
+_bzrmod=gnome-control-center-elementary
+
+build() {
+  msg "Connecting to Bazaar server...."
+
+  if [[ -d "$_bzrmod" ]]; then
+    cd "$_bzrmod" && bzr pull "$_bzrtrunk" -r $pkgver && cd ..
+    msg "The local files are updated."
+  else
+    bzr branch "$_bzrtrunk" "$_bzrmod" -r $pkgver
+  fi
+
+  msg "BZR checkout done or server timeout"
+  msg "Starting make..."
+
+  rm -rf "$_bzrmod-build"
+  cp -rf "$_bzrmod" "$_bzrmod-build"
+  cd "$_bzrmod-build"
+
+  patch -Np1 -i ../systemd-fallback.patch
+  gnome-autogen.sh --prefix=/usr --sysconfdir=/etc \
+      --localstatedir=/var --disable-static \
+      --enable-systemd --with-libsocialweb \
+      --disable-update-mimedb \
+      --without-cheese
+
+  #https://bugzilla.gnome.org/show_bug.cgi?id=656229
+  sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0 /g' -e 's/    if test "$export_dynamic" = yes && test -n "$export_dynamic_flag_spec"; then/      func_append compile_command " -Wl,-O1,--as-needed"\n      func_append finalize_command " -Wl,-O1,--as-needed"\n\0/' libtool
+  make ${MAKEFLAGS}
+}
+
+package() {
+  cd "$_bzrmod-build"
+  make DESTDIR="$pkgdir/" install
+}

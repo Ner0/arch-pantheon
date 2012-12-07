@@ -1,17 +1,17 @@
 pkgname=egtk-bzr
-pkgver=521
+pkgver=554
 pkgrel=1
 pkgdesc="The official elementary GTK theme designed to be smooth, attractive, fast, and usable."
 arch=('any')
 url="https://launchpad.net/egtk"
 license=('GPL2')
 groups=('pantheon')
-depends=('gtk-engine-murrine-git' 'gtk-engine-unico')
+depends=('gtk-engine-murrine' 'gtk-engine-unico')
 makedepends=('bzr')
 optdepends=('elementary-icons-bzr: elementary icon theme')
 conflicts=('elementary-gtk-theme')
-source=('egtk-openbox.patch')
-md5sums=('a2f0f5187e70657f02dee9883e577beb')
+source=('egtk-openbox.patch' 'egtk-xfwm.patch')
+md5sums=('a2f0f5187e70657f02dee9883e577beb' '67560f8626f8d947274829b41ce459fd')
 
 _bzrtrunk=lp:egtk
 _bzrmod=egtk
@@ -19,18 +19,18 @@ _bzrmod=egtk
 build() {
   msg "Connecting to Bazaar server...."
 
-  if [ -d $_bzrmod ]; then
-    cd $_bzrmod && bzr pull $_bzrtrunk -r $pkgver
+  if [[ -d "$_bzrmod" ]]; then
+    cd "$_bzrmod" && bzr pull "$_bzrtrunk" -r $pkgver
     msg "The local files are updated."
   else
-    bzr branch $_bzrtrunk $_bzrmod -r $pkgver
+    bzr branch "$_bzrtrunk" "$_bzrmod" -r $pkgver
   fi
 
   msg "BZR checkout done or server timeout"
 }
 
 package() {
-  cd "$srcdir/egtk"
+  cd egtk/
 
   find . -type f -not -name *~\* -exec install -Dm644 '{}' "$pkgdir/usr/share/themes/elementary/{}" \;
 
@@ -38,8 +38,10 @@ package() {
 
   cd "$pkgdir/usr/share/themes/elementary"
   patch -Np0 -i "$srcdir/egtk-openbox.patch"
+  patch -Np0 -i "$srcdir/egtk-xfwm.patch"
 
-  sed -i '/@import url("panel.css");/d' "$pkgdir/usr/share/themes/elementary/gtk-3.0/gtk-widgets.css"
+  sed -i 's/0\ 1\ alpha/0\ 1px\ alpha/g' gtk-3.0/{button.css,content-view.css,gtk-widgets.css}
+  sed -i 's/0\ 1\ shade/0\ 1px\ shade/g' gtk-3.0/gtk-widgets.css
 
   rm -rf ./{.bzr,debian,AUTHORS,CONTRIBUTORS,COPYING}
 }
